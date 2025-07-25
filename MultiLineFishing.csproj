@@ -1,20 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
-    <OutputPath>./bin/</OutputPath>
-    <AssemblyName>MultiLineFishing</AssemblyName>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="TerrariaServer">
+      <HintPath>lib/TerrariaServer.exe</HintPath>
+    </Reference>
     <Reference Include="TShockAPI">
-      <HintPath>../lib/TShockAPI.dll</HintPath>
+      <HintPath>lib/TShockAPI.dll</HintPath>
     </Reference>
     <Reference Include="OTAPI">
-      <HintPath>../lib/OTAPI.dll</HintPath>
-    </Reference>
-    <Reference Include="TerrariaServer">
-      <HintPath>../lib/TerrariaServer.exe</HintPath>
+      <HintPath>lib/OTAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
+
 </Project>
