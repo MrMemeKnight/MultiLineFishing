@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using Microsoft.Xna.Framework;
+using System.Threading.Tasks;
 
 namespace MultiLineFishing
 {
@@ -113,7 +114,7 @@ namespace MultiLineFishing
                 return;
 
             var projectile = Main.projectile[args.number];
-            if (!projectile.friendly || projectile.aiStyle != 61) // Check if bobber
+            if (!projectile.friendly || projectile.aiStyle != 61)
                 return;
 
             var player = TShock.Players[projectile.owner];
@@ -121,40 +122,47 @@ namespace MultiLineFishing
                 return;
 
             var uuid = player.UUID;
-            if (!playerConfigs.ContainsKey(uuid) || !playerConfigs[uuid].Enabled)
+            if (!playerConfigs.TryGetValue(uuid, out var config) || !config.Enabled)
                 return;
 
-            int extraLines = playerConfigs[uuid].ExtraLines;
+            int extraLines = config.ExtraLines;
 
-            float angleSpread = 20f; // total degrees spread
+            if (projectile.localAI[0] != 0f)
+                return;
+            projectile.localAI[0] = 1f; // Mark this bobber as handled
+
+            float angleSpread = 20f;
             float step = extraLines == 1 ? 0 : angleSpread / (extraLines - 1);
-
             float startAngle = -angleSpread / 2;
 
-            for (int i = 0; i < extraLines; i++)
+            Task.Run(async () =>
             {
-                float angle = startAngle + i * step;
-                Vector2 newVelocity = projectile.velocity.RotatedBy(MathHelper.ToRadians(angle));
-                int newProj = Projectile.NewProjectile(
-                    new EntitySource_Parent(projectile),
-                    projectile.position.X,
-                    projectile.position.Y,
-                    newVelocity.X,
-                    newVelocity.Y,
-                    projectile.type,
-                    projectile.damage,
-                    projectile.knockBack,
-                    projectile.owner
-                );
+                await Task.Delay(50); // Let the original bobber sync
 
-                if (newProj >= 0 && newProj < Main.maxProjectiles)
+                for (int i = 0; i < extraLines; i++)
                 {
-                Main.projectile[newProj].netUpdate = true;
+                    float angle = startAngle + i * step;
+                    Vector2 newVelocity = projectile.velocity.RotatedBy(MathHelper.ToRadians(angle));
 
-                TShock.Log.ConsoleInfo($"Spawned extra bobber {i + 1}/{extraLines} for player {player.Name}");
-            }
+                    int newProj = Projectile.NewProjectile(
+                        new EntitySource_Parent(projectile),
+                        projectile.position,
+                        newVelocity,
+                        projectile.type,
+                        projectile.damage,
+                        projectile.knockBack,
+                        projectile.owner
+                    );
+
+                    if (newProj >= 0 && newProj < Main.maxProjectiles)
+                    {
+                        Main.projectile[newProj].netUpdate = true;
+                        NetMessage.SendData((int)PacketTypes.ProjectileNew, -1, -1, null, newProj);
+                        TShock.Log.ConsoleInfo($"[MultiLineFishing] Spawned extra bobber {i + 1}/{extraLines} for player {player.Name}");
+                    }
+                }
+            });
         }
-    }
 
         private void LoadConfig()
         {
@@ -188,5 +196,11 @@ namespace MultiLineFishing
                 TShock.Log.ConsoleError("[MultiLineFishing] Failed to save config.");
             }
         }
+    }
+
+    public class PlayerConfig
+    {
+        public bool Enabled { get; set; } = false;
+        public int ExtraLines { get; set; } = 1;
     }
 }
