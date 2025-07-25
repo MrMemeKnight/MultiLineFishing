@@ -96,7 +96,7 @@ namespace MultiLineFishing
             }
             else
             {
-                player.SendErrorMessage("Usage: /multilinefishing [extraLines 1-5]");
+                player.SendErrorMessage("Usage: /multilinefishing [extraLines 1-10]");
                 return;
             }
 
