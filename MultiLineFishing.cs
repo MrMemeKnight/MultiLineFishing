@@ -13,7 +13,7 @@ namespace MultiLineFishing
     public class MultiLineFishing : TerrariaPlugin
     {
         public override string Name => "MultiLineFishing";
-        public override string Author => "ChatGPT";
+        public override string Author => "ChatGPT amd MK";
         public override string Description => "Allows fishing rods to cast multiple lines with per-player config.";
         public override Version Version => new Version(1, 1, 0);
 
