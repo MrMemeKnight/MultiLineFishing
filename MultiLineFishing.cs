@@ -85,7 +85,7 @@ namespace MultiLineFishing
             {
                 if (lineCount < 1 || lineCount > 10)
                 {
-                    player.SendErrorMessage("Please enter a line count between 1 and 5.");
+                    player.SendErrorMessage("Please enter a line count between 1 and 10.");
                     return;
                 }
 
@@ -137,14 +137,21 @@ namespace MultiLineFishing
                 Vector2 newVelocity = projectile.velocity.RotatedBy(MathHelper.ToRadians(angle));
                 int newProj = Projectile.NewProjectile(
                     new EntitySource_Parent(projectile),
-                    projectile.position,
-                    newVelocity,
+                    projectile.position.X,
+                    projectile.position.Y,
+                    newVelocity.X,
+                    newVelocity.Y,
                     projectile.type,
                     projectile.damage,
                     projectile.knockBack,
                     projectile.owner
                 );
-                NetMessage.SendData((int)PacketTypes.ProjectileNew, -1, -1, null, newProj);
+
+                if (newProj >= 0 && newProj < Main.maxProjectiles)
+                {
+                Main.projectile[newProj].netUpdate = true;
+
+                TShock.Log.ConsoleInfo($"Spawned extra bobber {i + 1}/{extraLines} for player {player.Name}");
             }
         }
 
