@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <Reference Include="TerrariaServer">
-      <HintPath>lib/TerrariaServer.exe</HintPath>
+      <HintPath>lib/TerrariaServer.dll</HintPath>
     </Reference>
     <Reference Include="TShockAPI">
       <HintPath>lib/TShockAPI.dll</HintPath>
