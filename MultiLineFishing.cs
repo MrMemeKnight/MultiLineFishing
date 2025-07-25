@@ -30,7 +30,7 @@ namespace MultiLineFishing
             ServerApi.Hooks.NetSendData.Register(this, OnSendData);
             ServerApi.Hooks.ServerLeave.Register(this, OnLeave);
             ServerApi.Hooks.ServerJoin.Register(this, OnJoin);
-            Commands.ChatCommands.Add(new Command("multilinefishing.toggle", ToggleFishing, "multilinefishing"));
+            Commands.ChatCommands.Add(new Command("multilinefishing.toggle", ToggleFishing, "multilinefishing", "mlf", "fishinglines"));
         }
 
         private void OnJoin(JoinEventArgs args)
@@ -83,7 +83,7 @@ namespace MultiLineFishing
             }
             else if (args.Parameters.Count == 1 && int.TryParse(args.Parameters[0], out int lineCount))
             {
-                if (lineCount < 1 || lineCount > 5)
+                if (lineCount < 1 || lineCount > 10)
                 {
                     player.SendErrorMessage("Please enter a line count between 1 and 5.");
                     return;
