@@ -1,5 +1,6 @@
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using TerrariaApi.Server;
 using TShockAPI;
 using OTAPI;
@@ -135,7 +136,7 @@ namespace MultiLineFishing
                 float angle = startAngle + i * step;
                 Vector2 newVelocity = projectile.velocity.RotatedBy(MathHelper.ToRadians(angle));
                 int newProj = Projectile.NewProjectile(
-                    projectile.GetSource_FromThis(),
+                    new EntitySource_Parent(projectile),
                     projectile.position,
                     newVelocity,
                     projectile.type,
