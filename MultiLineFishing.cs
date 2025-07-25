@@ -154,6 +154,7 @@ namespace MultiLineFishing
                 TShock.Log.ConsoleInfo($"Spawned extra bobber {i + 1}/{extraLines} for player {player.Name}");
             }
         }
+    }
 
         private void LoadConfig()
         {
