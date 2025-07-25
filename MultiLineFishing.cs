@@ -146,6 +146,7 @@ namespace MultiLineFishing
                     projectile.knockBack,
                     projectile.owner
                 );
+            }
 
                 if (newProj >= 0 && newProj < Main.maxProjectiles)
                 {
