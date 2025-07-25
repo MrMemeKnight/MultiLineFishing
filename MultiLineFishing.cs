@@ -27,7 +27,24 @@ namespace MultiLineFishing
             LoadConfig();
             ServerApi.Hooks.NetSendData.Register(this, OnSendData);
             ServerApi.Hooks.ServerLeave.Register(this, OnLeave);
+            ServerApi.Hooks.ServerJoin.Register(this, OnJoin);
             Commands.ChatCommands.Add(new Command("multilinefishing.toggle", ToggleFishing, "multilinefishing"));
+        }
+
+        private void OnJoin(JoinEventArgs args)
+        {
+            var player = TShock.Players[args.Who];
+            if (player == null || !player.RealPlayer)
+                return;
+
+            var uuid = player.UUID;
+            if (!playerConfigs.TryGetValue(uuid, out var config))
+                return;
+
+            if (config.Enabled)
+                player.SendInfoMessage($"[c/55FF55:MultiLineFishing Enabled: ✅ | Extra Lines: {config.ExtraLines}]");
+            else
+                player.SendInfoMessage("[c/FF5555:MultiLineFishing Enabled: ❌]");
         }
 
         protected override void Dispose(bool disposing)
@@ -36,6 +53,7 @@ namespace MultiLineFishing
             {
                 ServerApi.Hooks.NetSendData.Deregister(this, OnSendData);
                 ServerApi.Hooks.ServerLeave.Deregister(this, OnLeave);
+                ServerApi.Hooks.ServerJoin.Deregister(this, OnJoin);
                 SaveConfig();
             }
             base.Dispose(disposing);
